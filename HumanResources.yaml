@@ -1,0 +1,154 @@
+swagger: "2.0"
+info:
+  description: "This is the Human Resources Data Service"
+  version: "v1"
+  title: "HR API"
+basePath: "/api/v1/"
+tags:
+- name: "HRDS"
+  description: "Human Resources Data Service. Note: This documentation is written in PascalCase for readability, however data returned by HR Data Service will always be camelCase.  HR Data Service accepts member names and values in a case-insensitive fashion."
+- name: "employee"
+  description: "Employee information"
+schemes:
+- "https"
+paths:
+  /company/{companyName}/employee:
+    get:
+      tags:
+      - "employee"
+      summary: "Get employees"
+      description: "Gets all employees for a given company"
+      parameters:
+      - in: path
+        name: companyName
+        description: "The company name"
+        type: string
+        required: true
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/EmployeeInformation"
+    post:
+      tags:
+      - "employee"
+      summary: "Create new employee"
+      description: "Create a new employee for a given company"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: path
+        name: companyName
+        description: "The company name"
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: "Employee to be added to Human Resources Data Service"
+        required: true
+        schema:
+          $ref: "#/definitions/EmployeeInformation"
+      responses:
+        201:
+          description: "Path to new employee with employee's unique employee ID (for this company)"
+          schema:
+            $ref: "#/definitions/EmployeeInformation"
+        400:
+          description: "Invalid request"
+        404:
+          description: "Company not found"
+    put:
+      tags:
+      - "employee"
+      summary: "Update employee"
+      description: "Update an employee.  Employee ID cannot be changed once created."
+      consumes:
+      - "application/json"
+      parameters:
+      - in: path
+        name: companyName
+        description: "The employee's company name"
+        type: string
+        required: true
+      - in: body
+        name: body
+        description: "Employee to be updated"
+        required: true
+        schema:
+          $ref: "#/definitions/EmployeeInformation"
+      responses:
+        200:
+          description: "OK"
+        400:
+          description: "Invalid Request"
+        404:
+          description: "Company or employee not found"
+  /company/{companyName}/employee/{id}:
+    get:
+      tags:
+      - "employee"
+      summary: "Get employee"
+      description: "Gets the specified employee's details"
+      parameters:
+      - in: path
+        name: companyName
+        description: "The company name"
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: "Employee's unique employee ID (for this company)"
+        required: true
+        type: integer
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/EmployeeInformation"
+        404:
+          description: "Company or employee not found"
+    delete:
+      tags:
+      - "employee"
+      summary: "Delete employee"
+      description: "Deletes the specified employee"
+      parameters:
+      - in: path
+        name: companyName
+        description: "The company name"
+        type: string
+        required: true
+      - in: path
+        name: id
+        description: "Employee's unique employee ID (for this company)"
+        required: true
+        type: integer
+      responses:
+        204:
+          description: "OK"
+        404:
+          description: "Company or employee not found"
+definitions:
+  EmployeeInformation:
+    type: object
+    properties:
+      CompanyName:
+        type: string
+      EmployeeId:
+        type: integer
+      FirstName:
+        type: string
+      LastName:
+        type: string
+      SocialSecurity:
+        type: string
+      HireDate:
+        type: string
+      ManagerEmployeeId:
+        type: integer
